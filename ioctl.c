@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
                         return 0;
                     }
 
-                    page--;
+                    page -= 2;
                     line = 0;
                     fseek(fd, 0, SEEK_SET);
                 }
