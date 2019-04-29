@@ -22,28 +22,43 @@ int main(int argc, char *argv[])
 
     int line = 0;
     int page = 1;
-    char input = 0;
+    char input = ' ';
 
-    while ((curr = getc(fd)) != EOF)
+    while ((curr = fgetc(fd)) != EOF)
     {
         printf("%c", curr);
 
-        if((curr = getc(fd)) == '\n')
+        if ((curr = fgetc(fd)) == '\n')
         {
             line++;
 
-            if(line == height - 1)
+            if (line == height - 1)
             {
                 printf("[Page %d] Enter to continue, + b for previous: ", page);
             }
 
             input = getchar();
 
-            if(input == 'b')
+            if (input == 'b')
             {
+
+                if (page < 2)
+                {
+                    printf("\nOut of range!\n");
+                    return 0;
+                }
+
                 page--;
+                line = 0;
                 fseek(fd, (height * width * page), SEEK_SET);
+            }
+            else
+            {
+                page++;
+                line = 0;
             }
         }
     }
+
+    return 0;
 }
