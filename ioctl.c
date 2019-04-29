@@ -1,3 +1,12 @@
+/*
+ **************************************************		
+ * Program:	    excess
+ * Author:		Nathalie Herzog
+ * Class:		2AHIF
+ * Date:		29.04.
+ * *************************************************
+*/
+
 #include <sys/ioctl.h>
 #include <string.h>
 #include <errno.h>
@@ -18,47 +27,53 @@ int main(int argc, char *argv[])
     const int width = ws.ws_row;
 
     FILE *fd = fopen("data.txt", "r");
-    char curr;
+    char curr = fgetc(fd);
 
     int line = 0;
     int page = 1;
     char input = ' ';
+    int count = 0;
 
-    while ((curr = fgetc(fd)) != EOF)
+    while (curr != EOF)
     {
         printf("%c", curr);
+        count++;
 
-        if ((curr = fgetc(fd)) == '\n')
+        if ((curr = fgetc(fd)) == '\n' || count >= width)
         {
             line++;
+            count = 0;
 
             if (line == height - 1)
             {
-                printf("[Page %d] Enter to continue, + b for previous: ", page);
-            }
+                printf("\n[Page %d] Enter to continue, + b for previous: ", page);
 
-            input = getchar();
+                input = getchar();
 
-            if (input == 'b')
-            {
-
-                if (page < 2)
+                if (input == 'b')
                 {
-                    printf("\nOut of range!\n");
-                    return 0;
-                }
 
-                page--;
-                line = 0;
-                fseek(fd, (height * width * page), SEEK_SET);
-            }
-            else
-            {
-                page++;
-                line = 0;
+                    if (page < 2)
+                    {
+                        printf("\nOut of range!\n");
+                        fclose(fd);
+                        return 0;
+                    }
+
+                    page--;
+                    line = 0;
+                    fseek(fd, 0, SEEK_SET);
+                }
+                else
+                {
+                    page++;
+                    line = 0;
+                    count = 0;
+                }
             }
         }
     }
-
+    printf("\n");
+    fclose(fd);
     return 0;
 }
